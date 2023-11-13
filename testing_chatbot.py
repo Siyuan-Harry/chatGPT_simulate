@@ -6,7 +6,7 @@ st.title("GPT4-1106 clone")
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4-vision-preview"
+    st.session_state["openai_model"] = "gpt-4-1106-preview"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
