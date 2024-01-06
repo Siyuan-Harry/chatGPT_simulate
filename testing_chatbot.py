@@ -1,12 +1,12 @@
-import openai
+from openai import OpenAI
 import streamlit as st
 
 st.title("💡AI助教")
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+    st.session_state["openai_model"] = "gpt-4-1106-preview"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -25,7 +25,7 @@ if prompt:
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
-        for response in openai.ChatCompletion.create(
+        for response in client.chat.completion.create(
             model=st.session_state["openai_model"],
             messages=[
                 {"role": m["role"], "content": m["content"]}
@@ -33,7 +33,10 @@ if prompt:
             ],
             stream=True,
         ):
-            full_response += response.choices[0].delta.get("content", "")
+            try:
+                full_response += response.choices[0].delta.content
+            except:
+                full_response += ""
             message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
